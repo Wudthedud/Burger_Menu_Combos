@@ -1,5 +1,5 @@
 """ burger_combos_V2
-adds user actions such as adding or deleting combos
+adds user actions such as adding or deleting combos, search and edit
 """
 
 #intial combos
@@ -20,7 +20,7 @@ menu_items = {
 }
 
 #add new combo
-def add_combos():
+def add():
     name = input("Enter the new combo name: \n")
     items = []
     while True:
@@ -38,16 +38,19 @@ def add_combos():
         else:
             pass
     combos[name] = items
-    print(combos)
 
 #remove combo
 def remove():
-    try:
-        del combos[name.lower().strip()]
-        return False
-    except:
-        print('Please enter a valid combo')
-        return True
+    while True:
+        name = input("Enter a combo to delete: \n").strip().lower()
+        if name in combos:
+            del combos[name.lower().strip()]
+            print(f'{name.capitalize()} combo deleted')
+            break
+        else:
+            print('Please enter a valid combo')
+    print(combos)
+
         
         
 #lists combos and total
@@ -99,4 +102,4 @@ def main():
     if choice == 2:
         remove()
 
-add_combos()
+menu()
