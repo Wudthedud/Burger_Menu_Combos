@@ -1,4 +1,4 @@
-""" burger_combos_V2
+""" burger_combosV2
 adds user actions such as adding or deleting combos, search and edit
 """
 
@@ -19,28 +19,38 @@ menu_items = {
     'smoothie' : 2.00
 }
 
-#add new combo
+
+def yn_check(question):
+    """yes/no check"""
+    choice = input(question).strip().lower
+    while True:
+        if choice == "y" or "yes":
+            return True
+        elif choice == "n" or "no":
+            return False
+        else:
+            print("Please enter [Y] or [N]")
+
+
 def add():
-    name = input("Enter the new combo name: \n")
+    """add new combo"""
+    name = input("Enter the new combo name: \n").lower
     items = []
     while True:
         item = input("\n\nEnter the an item for the combo, [x] to exit \n").lower().strip()
         if item == "x":
+            combos[name] = items
+            print(f'{name} added with {combos[name]}')
             break
         if item in menu_items:
             items.append(item)
             print("Items added to combo")
-        else:   
+        else:  
             print("The item is not one of the menu items")
-    for item in items:
-        if item not in menu_items:
-            return True 
-        else:
-            pass
-    combos[name] = items
+    
 
-#remove combo
 def remove():
+    """remove combo"""
     while True:
         name = input("Enter a combo to delete: \n").strip().lower()
         if name in combos:
@@ -51,10 +61,8 @@ def remove():
             print('Please enter a valid combo')
     print(combos)
 
-        
-        
-#lists combos and total
 def menu():
+    """lists combos and total"""
     for combo, items in combos.items():
         total = 0
         print(f"-- {combo.capitalize()} Combo --")
@@ -63,19 +71,20 @@ def menu():
             total += menu_items[item]
         print(f"Total = ${total:.2f}")
 
-#search for combo and edit
-def search():
+
+def edit():
+    """search for combo and edit"""
     name = input('Enter combo to search for: ').lower().strip()
     if name in combos:
         print(f"-- {name.capitalize()} Combo --")
         for item in combos[name]:
-                print(f"{item.capitalize()} : ${menu_items[item]:.2f}")
+            print(f"{item.capitalize()} : ${menu_items[item]:.2f}")
         edit = input('Are all details correct? [Y/N] \n').lower()
-        if edit == 'no' or edit == 'n':
+        if edit in ('no', 'n'):
             for i in range(3):
                 print(f'[{i + 1}] {combos[name][i].capitalize()}')
             print(f'[4] Change combo name ("{name.capitalize()}")')
-            print(f'[5] Exit')
+            print('[5] Exit')
             choice = int(input('Which item would you like to change: \n'))     
             if choice == 5:
                 pass
@@ -96,10 +105,18 @@ def search():
 
 
 def main():
-    choice = int(input('Would you like to [1] Add a new combo, [2] Remove a combo, or [3] Edit a combo? \n'))
+    """main code"""
+    choice = int(input('Would you like to [1] Add a new combo, [2] Remove a combo, '
+                       '[3] Edit a combo, [4] List the menu, or [5] exit? \n'))
     if choice == 1:
-        add_combos()
-    if choice == 2:
+        add()
+    elif choice == 2:
         remove()
+    elif choice == 3:
+        edit()
+    elif choice == 4:
+        menu()
+    else:
+        exit()
 
-menu()
+main()
