@@ -20,18 +20,6 @@ menu_items = {
 }
 
 
-def yn_check(question):
-    """yes/no check"""
-    choice = input(question).strip().lower
-    while True:
-        if choice == "y" or "yes":
-            return True
-        elif choice == "n" or "no":
-            return False
-        else:
-            print("Please enter [Y] or [N]")
-
-
 def add():
     """add new combo"""
     name = input("Enter the new combo name: \n").lower
@@ -45,7 +33,7 @@ def add():
         if item in menu_items:
             items.append(item)
             print("Items added to combo")
-        else:  
+        else:
             print("The item is not one of the menu items")
     
 
@@ -79,8 +67,6 @@ def edit():
         print(f"-- {name.capitalize()} Combo --")
         for item in combos[name]:
             print(f"{item.capitalize()} : ${menu_items[item]:.2f}")
-        edit = input('Are all details correct? [Y/N] \n').lower()
-        if edit in ('no', 'n'):
             for i in range(3):
                 print(f'[{i + 1}] {combos[name][i].capitalize()}')
             print(f'[4] Change combo name ("{name.capitalize()}")')
@@ -97,8 +83,6 @@ def edit():
                 new_item = input('What would you like the new item to be: \n')
                 combos[name].insert(choice - 1, new_item)
                 combos[name].pop(choice)
-        else: 
-            return False
     else:
         print("Sorry, that combo does not exist.")
 

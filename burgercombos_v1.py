@@ -1,6 +1,8 @@
 """ burger_combos_V1
 Initial price dictionary and combos"""
 
+# pylint: disable=C0103
+
 #menu
 menu_items = {
     'beef burger' : 5.69,
@@ -18,7 +20,7 @@ combos = {
     'super' : ['cheeseburger', 'large fries', 'smoothie']
 }
 
-#lists combos nad total
+#lists combos and total
 for combo, items in combos.items():
     total = 0
     print(f"-- {combo.capitalize()} Combo --")
@@ -26,4 +28,3 @@ for combo, items in combos.items():
         print(f"{item.capitalize()} : ${menu_items[item]}")
         total += menu_items[item]
     print(f"Total = ${total:.2f}")
-    

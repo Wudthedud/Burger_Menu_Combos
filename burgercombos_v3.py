@@ -1,5 +1,5 @@
-""" burger_combosV2
-adds user actions such as adding or deleting combos, search and edit
+""" burgercombos_V3
+adds error checking and action confirmations
 """
 
 #intial combos
@@ -18,7 +18,6 @@ menu_items = {
     'cheeseburger' : 6.69,
     'smoothie' : 2.00
 }
-
 
 def yn_check(question):
     """yes/no check"""
@@ -45,21 +44,23 @@ def add():
         if item in menu_items:
             items.append(item)
             print("Items added to combo")
-        else:  
+        else:
             print("The item is not one of the menu items")
-    
 
 def remove():
     """remove combo"""
     while True:
         name = input("Enter a combo to delete: \n").strip().lower()
         if name in combos:
-            del combos[name.lower().strip()]
-            print(f'{name.capitalize()} combo deleted')
-            break
+            if yn_check(f'Confirm removal of {name.capitalize()} combo?'):   
+                del combos[name.lower().strip()]
+                print(f'{name.capitalize()} combo deleted')
+                break
+            else: 
+                print('Removal cancelled')
+                break
         else:
             print('Please enter a valid combo')
-    print(combos)
 
 def menu():
     """lists combos and total"""
@@ -79,13 +80,12 @@ def edit():
         print(f"-- {name.capitalize()} Combo --")
         for item in combos[name]:
             print(f"{item.capitalize()} : ${menu_items[item]:.2f}")
-        edit = input('Are all details correct? [Y/N] \n').lower()
-        if edit in ('no', 'n'):
+        if yn_check('Are all details correct?'):
             for i in range(3):
                 print(f'[{i + 1}] {combos[name][i].capitalize()}')
             print(f'[4] Change combo name ("{name.capitalize()}")')
             print('[5] Exit')
-            choice = int(input('Which item would you like to change: \n'))     
+            choice = int(input('Which item would you like to change: \n'))
             if choice == 5:
                 pass
             elif choice == 4:
@@ -97,8 +97,8 @@ def edit():
                 new_item = input('What would you like the new item to be: \n')
                 combos[name].insert(choice - 1, new_item)
                 combos[name].pop(choice)
-        else: 
-            return False
+        else:
+            pass
     else:
         print("Sorry, that combo does not exist.")
 
