@@ -1,6 +1,7 @@
 """ burgercombos_V3
-adds error checking and action confirmations
+adds easygui
 """
+import easygui as eg
 
 #intial combos
 combos = {
@@ -19,45 +20,32 @@ menu_items = {
     'smoothie' : 2.00
 }
 
-def yn_check(question):
-    """yes/no check"""
-    choice = input(question).strip().lower
-    while True:
-        if choice == "y" or "yes":
-            return True
-        elif choice == "n" or "no":
-            return False
-        else:
-            print("Please enter [Y] or [N]")
-
 
 def add():
     """add new combo"""
-    name = input("Enter the new combo name: \n").lower
-    items = []
-    while True:
-        item = input("\n\nEnter the an item for the combo, [x] to exit \n").lower().strip()
-        if item == "x":
-            combos[name] = items
-            print(f'{name} added with {combos[name]}')
-            break
-        if item in menu_items:
-            items.append(item)
-            print("Items added to combo")
-        else:
-            print("The item is not one of the menu items")
+    name = eg.enterbox("Enter the new combo name",  "Add new Combo").strip().lower()
+    items = eg.multchoicebox("Pick items to include in combo", "Add new Combo",
+                             ['Beef burger', 'Fries', 'Large fries', 'Fizzy drink',
+                              'Cheeseburger', 'Smoothie'])
+    confirm = eg.ynbox(f'Are these details correct: \n Name: {name.capitalize()}\n'
+                       f'Items: {", ".join(map(str, items)).capitalize()}', 'Add new Combo')
+    if confirm == 'yes':
+        combos[name] = items
+        eg.msgbox(f'{name} combo added!')
+    else:
+        add()
 
 def remove():
     """remove combo"""
     while True:
-        name = input("Enter a combo to delete: \n").strip().lower()
+        name = eg.enterbox("Enter combo to delete",  "Delete Combo").strip().lower()
         if name in combos:
-            if yn_check(f'Confirm removal of {name.capitalize()} combo?'):
-                del combos[name.lower().strip()]
-                print(f'{name.capitalize()} combo deleted')
+            if eg.ynbox(f'Are you sure you want to delete {name.capitalize()}?', 'Delete Combo'):
+                del combos[name]
+                eg.msgbox(f'{name} combo deleted!')
                 break
             else:
-                print('Removal cancelled')
+                eg.msgbox(f'{name} deletion cancelled!')
                 break
         else:
             print('Please enter a valid combo')
@@ -80,7 +68,7 @@ def edit():
         print(f"-- {name.capitalize()} Combo --")
         for item in combos[name]:
             print(f"{item.capitalize()} : ${menu_items[item]:.2f}")
-        if yn_check('Are all details correct?'):
+        if eg.ynbox('Would you like to edit this combo?', 'Edit Combo'):
             for i in range(3):
                 print(f'[{i + 1}] {combos[name][i].capitalize()}')
             print(f'[4] Change combo name ("{name.capitalize()}")')

@@ -1,3 +1,4 @@
+# pylint: skip-file
 import customtkinter
 from customtkinter import * 
 def button_callback():
