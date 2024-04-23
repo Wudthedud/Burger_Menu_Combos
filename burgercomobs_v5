@@ -6,4 +6,8 @@ from customtkinter import *
 
 app = customtkinter.CTk()
 app.title("my app")
-app.geometry("500x400")
+app.geometry("400x500")
+app.grid_columnconfigure((0, 1), weight=1)
+
+
+app.mainloop()
