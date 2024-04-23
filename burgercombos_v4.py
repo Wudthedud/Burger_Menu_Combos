@@ -1,4 +1,4 @@
-""" burgercombos_V3
+""" burgercombos_V4
 adds easygui
 """
 import easygui as eg
@@ -23,88 +23,92 @@ menu_items = {
 
 def add():
     """add new combo"""
-    name = eg.enterbox("Enter the new combo name",  "Add new Combo").strip().lower()
-    items = eg.multchoicebox("Pick items to include in combo", "Add new Combo",
-                             ['Beef burger', 'Fries', 'Large fries', 'Fizzy drink',
-                              'Cheeseburger', 'Smoothie'])
-    confirm = eg.ynbox(f'Are these details correct: \n Name: {name.capitalize()}\n'
-                       f'Items: {", ".join(map(str, items)).capitalize()}', 'Add new Combo')
-    if confirm == 'yes':
-        combos[name] = items
-        eg.msgbox(f'{name} combo added!')
-    else:
-        add()
+    try:
+        name = eg.enterbox("Enter the new combo name",  "Add new Combo").strip().lower()
+        items = eg.multchoicebox("Pick items to include in combo", "Add new Combo",
+                                ['beef burger', 'fries', 'large fries', 'fizzy drink',
+                                'cheeseburger', 'smoothie'])
+        confirm = eg.ynbox(f'Are these details correct: \n\nName: {name.capitalize()}\n'
+                        f'Items: {", ".join(map(str, items)).capitalize()}', 'Add new Combo')
+        if confirm:
+            combos[name] = items
+            eg.msgbox(f' Combo {name.capitalize()} added!')
+            main()
+        else:
+            add()
+    finally:
+        main()
+
 
 def remove():
     """remove combo"""
     while True:
-        name = eg.enterbox("Enter combo to delete",  "Delete Combo").strip().lower()
-        if name in combos:
-            if eg.ynbox(f'Are you sure you want to delete {name.capitalize()}?', 'Delete Combo'):
-                del combos[name]
-                eg.msgbox(f'{name} combo deleted!')
-                break
+        try:
+            name = eg.enterbox("Enter combo to delete",  "Delete Combo").strip().lower()
+            if name in combos:
+                if eg.ynbox(f'Are you sure you want to delete {name.capitalize()}?', 'Delete Combo'):
+                    del combos[name]
+                    eg.msgbox(f'{name} combo deleted!')
+                    break
+                else:
+                    eg.msgbox(f'{name} deletion cancelled!')
+                    break
             else:
-                eg.msgbox(f'{name} deletion cancelled!')
-                break
-        else:
-            print('Please enter a valid combo')
+                eg.msgbox("Please enter a valid combo", "Delete a combo")
+        finally:
+            main()
+
 
 def menu():
     """lists combos and total"""
+    msg = ""
     for combo, items in combos.items():
         total = 0
-        print(f"-- {combo.capitalize()} Combo --")
+        msg += f"-- {combo.capitalize()} Combo --\n"
         for item in items:
-            print(f"{item.capitalize()} : ${menu_items[item]}")
+            msg += (f"{item.capitalize()} : ${menu_items[item]}\n")
             total += menu_items[item]
-        print(f"Total = ${total:.2f}")
+        msg += f"Total = ${total:.2f}\n\n"
+    eg.msgbox(msg, 'Menu')
 
 
 def edit():
     """search for combo and edit"""
-    name = input('Enter combo to search for: ').lower().strip()
+    name = eg.choicebox("Which combo would you like to edit?",
+                        "Edit a Combo", (list(combos.keys())))
     if name in combos:
-        print(f"-- {name.capitalize()} Combo --")
-        for item in combos[name]:
-            print(f"{item.capitalize()} : ${menu_items[item]:.2f}")
-        if eg.ynbox('Would you like to edit this combo?', 'Edit Combo'):
-            for i in range(3):
-                print(f'[{i + 1}] {combos[name][i].capitalize()}')
-            print(f'[4] Change combo name ("{name.capitalize()}")')
-            print('[5] Exit')
-            choice = int(input('Which item would you like to change: \n'))
-            if choice == 5:
-                pass
-            elif choice == 4:
-                new_name = input('What would you like the combo to be called: \n').strip().lower()
-                combos[new_name] = combos[name]
-                del combos[name]
-            elif choice >= 1 and choice <= 3:
-                print(f'You are editing item [{choice}]: {combos[name][choice - 1].capitalize()}')
-                new_item = input('What would you like the new item to be: \n')
-                combos[name].insert(choice - 1, new_item)
-                combos[name].pop(choice)
-        else:
-            pass
+        choice = eg.buttonbox(f"You are editing the {name} combo\nWhat would you like to do?",
+                              "Edit a combo", ("Change combo name", "Change combo items"))
+        if choice == "Change combo name":
+            new_name = eg.enterbox("What would you like the new name to be: ", "Change combo name")
+            combos[new_name] = combos[name]
+            del combos[name]
+        elif choice == "Change combo items":
+            changed_item = eg.choicebox("Which item would you like to change",
+                                        "Change combo items", (combos['value']))
+            new_item = eg.choicebox(f"Which item would you like to swap out {changed_item} for?",
+                                    "Change combo items", (list(menu_items.keys())))
+            combos[name].append(new_item)
+            combos[name].remove(changed_item)
     else:
         print("Sorry, that combo does not exist.")
 
 
-
 def main():
     """main code"""
-    choice = int(input('Would you like to [1] Add a new combo, [2] Remove a combo, '
-                       '[3] Edit a combo, [4] List the menu, or [5] exit? \n'))
-    if choice == 1:
-        add()
-    elif choice == 2:
-        remove()
-    elif choice == 3:
-        edit()
-    elif choice == 4:
-        menu()
-    else:
-        exit()
+    while True:
+        choice = eg.buttonbox("What would you like to do?", 'Welcome',
+                            ('Add new combo', 'Remove a combo', 'Display Menu',
+                             'Edit a combo', 'Exit'))
+        if choice == 'Add new combo':
+            add()
+        elif choice == 'Remove a combo':
+            remove()
+        elif choice == 'Display Menu':
+            menu()
+        elif choice == 'Edit a combo':
+            edit()
+        else:
+            exit()
 
 main()

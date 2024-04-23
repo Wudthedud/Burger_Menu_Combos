@@ -1,0 +1,9 @@
+""" burgercombos_V4
+adds easyguitkinter"""
+
+import customtkinter
+from customtkinter import * 
+
+app = customtkinter.CTk()
+app.title("my app")
+app.geometry("500x400")
