@@ -36,8 +36,7 @@ def add():
             while True:
                 try:
                     items = eg.multchoicebox("Pick items to include in combo", "Add new Combo",
-                                ['beef burger', 'fries', 'large fries', 'fizzy drink',
-                                'cheeseburger', 'smoothie'])
+                                            list(menu_items.keys()))
                     confirm = eg.ynbox(f'Are these details correct: \n\nName: {name.capitalize()}\n'
                                     f'Items: {", ".join(map(str, items)).capitalize()}', 'Add new Combo')
                     break
@@ -55,21 +54,15 @@ def add():
 
 def remove():
     """remove combo"""
-    while True:
-        try:
-            name = eg.enterbox("Enter combo to delete",  "Delete Combo").strip().lower()
-            if name in combos:
-                if eg.ynbox(f'Are you sure you want to delete {name.capitalize()}?', 'Delete Combo'):
-                    del combos[name]
-                    eg.msgbox(f'{name} combo deleted!')
-                    break
-                else:
-                    eg.msgbox(f'{name} deletion cancelled!')
-                    break
-            else:
-                eg.msgbox("Please enter a valid combo", "Delete a combo")
-        except AttributeError:
-            main()
+    try:
+        name = eg.choicebox("Enter combo to delete", "Delete combo", list(combos.keys()))
+        if eg.ynbox(f'Are you sure you want to delete {name.capitalize()}?', 'Delete Combo'):
+            del combos[name]
+            eg.msgbox(f'{name.capitalize()} combo deleted!')
+        else:
+            eg.msgbox(f'{name.capitalize()} deletion cancelled!')
+    except AttributeError:
+        main()
 
 
 def menu():
@@ -81,7 +74,9 @@ def menu():
         for item in items:
             msg += (f"{item.capitalize()} : ${menu_items[item]}\n")
             total += menu_items[item]
-        msg += f"Total = ${total:.2f}\n\nAlso printed to Python Console"
+        msg += f"Total = ${total:.2f}\n\n"
+    msg += "-" * 20
+    msg += "\n\n\nMenu also printed to python console"
     eg.msgbox(msg, 'Menu')
     for combo, items in combos.items():
         total = 0
