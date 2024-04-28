@@ -26,7 +26,11 @@ menu_items = {
 def add():
     """add new combo"""
     try:
-        name = eg.enterbox("Enter the new combo name",  "Add new Combo").strip().lower()
+        while True:
+            name = eg.enterbox("Enter the new combo name",  "Add new Combo").strip().lower()
+            if name != "":
+                break
+            eg.msgbox("Please input a name", "Edit combo")
         if name in combos:
             if eg.ynbox(f"{name.capitalize()} is already a combo, would you like to edit it?"):
                 edit(name)
@@ -38,7 +42,8 @@ def add():
                     items = eg.multchoicebox("Pick items to include in combo", "Add new Combo",
                                             list(menu_items.keys()))
                     confirm = eg.ynbox(f'Are these details correct: \n\nName: {name.capitalize()}\n'
-                                    f'Items: {", ".join(map(str, items)).capitalize()}', 'Add new Combo')
+                                       f'Items: {", ".join(map(str, items)).capitalize()}',
+                                       'Add new Combo')
                     break
                 except TypeError:
                     eg.msgbox("Please select at least one item")
@@ -67,6 +72,13 @@ def remove():
 
 def menu():
     """lists combos and total"""
+    for combo, items in combos.items():
+        total = 0
+        print(f"-- {combo.capitalize()} Combo --")
+        for item in items:
+            print(f"{item.capitalize()} : ${menu_items[item]}")
+            total += menu_items[item]
+        print(f"Total = ${total:.2f}")
     msg = ""
     for combo, items in combos.items():
         total = 0
@@ -78,19 +90,11 @@ def menu():
     msg += "-" * 20
     msg += "\n\n\nMenu also printed to python console"
     eg.msgbox(msg, 'Menu')
-    for combo, items in combos.items():
-        total = 0
-        print(f"-- {combo.capitalize()} Combo --")
-        for item in items:
-            print(f"{item.capitalize()} : ${menu_items[item]}")
-            total += menu_items[item]
-        print(f"Total = ${total:.2f}")
 
 
 def edit(name):
     """search for combo and edit"""
     try:
-
         total = 0
         msg = f"--{name.capitalize()} combo--\n"
         for item in combos[name]:
@@ -99,19 +103,51 @@ def edit(name):
         msg += f"Total = ${total:.2f}\n\n"
         msg += "-" * 20
 
-        choice = eg.buttonbox(f"{msg}\nWhat would you like to do?\n",
-                                "Edit a combo", ("Change combo name", "Change combo items", "Go back"))
+        choice = eg.buttonbox(f"{msg}\nWhat would you like to do?\n", "Edit a combo",
+                              ("Change combo name", "Change combo items", "Go back"))
         if choice == "Change combo name":
-            new_name = eg.enterbox("What would you like the new name to be: ", "Change combo name")
-            combos[new_name] = combos[name]
-            del combos[name]
+            while True:
+                new_name = eg.enterbox("What would you like the new name to be: ",
+                                       "Change combo name")
+                if new_name != "":
+                    break
+                eg.msgbox("Please input a name", "Edit combo")
+            msg = "Is this correct:\n\n"
+            msg += f"--{new_name.capitalize()} combo--\n"
+            for item in combos[name]:
+                msg += (f"{item.capitalize()} : ${menu_items[item]}\n")
+                total += menu_items[item]
+            msg += f"Total = ${total:.2f}\n\n"
+            msg += "-" * 20
+            if eg.ynbox(msg, "Edit combo"):
+                combos[new_name] = combos[name]
+                del combos[name]
+                eg.msgbox("Edit complete", "Edit a combo")
+            else:
+                eg.msgbox("Edit cancelled", "Edit a combo")
+                edit(name)
         elif choice == "Change combo items":
             changed_item = eg.choicebox("Which item would you like to change",
-                                        "Change combo items", (combos['value']))
+                                        "Change combo items", (combos[name]))
+            if changed_item is None:
+                edit(name)
             new_item = eg.choicebox(f"Which item would you like to swap out {changed_item} for?",
                                     "Change combo items", (list(menu_items.keys())))
             combos[name].append(new_item)
             combos[name].remove(changed_item)
+            msg = "Is this correct:\n\n"
+            msg += f"--{name.capitalize()} combo--\n"
+            for item in combos[name]:
+                msg += (f"{item.capitalize()} : ${menu_items[item]}\n")
+                total += menu_items[item]
+            msg += f"Total = ${total:.2f}\n\n"
+            msg += "-" * 20
+            if eg.ynbox(msg, "Edit combo"):
+                eg.msgbox("Edit complete", "Edit a combo")
+            else:
+                eg.msgbox("Edit cancelled", "Edit a combo")
+                combos[name].append(changed_item)
+                combos[name].remove(new_item)
         elif choice == "Go back":
             main()
     except AttributeError:
