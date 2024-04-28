@@ -112,6 +112,7 @@ def edit(name):
                 if new_name != "":
                     break
                 eg.msgbox("Please input a name", "Edit combo")
+            total = 0
             msg = "Is this correct:\n\n"
             msg += f"--{new_name.capitalize()} combo--\n"
             for item in combos[name]:
@@ -135,6 +136,7 @@ def edit(name):
                                     "Change combo items", (list(menu_items.keys())))
             combos[name].append(new_item)
             combos[name].remove(changed_item)
+            total = 0
             msg = "Is this correct:\n\n"
             msg += f"--{name.capitalize()} combo--\n"
             for item in combos[name]:

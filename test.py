@@ -1,11 +1,28 @@
 # pylint: skip-file
 import easygui as eg
 combos = {
-    'value' : ['beef burger', 'fries', 'fizzy drink'],
-    'cheezy' : ['cheeseburger', 'fries', 'fizzy drink'],
-    'super' : ['cheeseburger', 'large fries', 'smoothie']
+    'value' : {'beef burger': 5.69, 
+               'fries': 1.00, 
+               'fizzy drink': 1.00},
+    
+    'cheezy' : {'cheeseburger': 6.69, 
+                'fries': 1.00, 
+                'fizzy drink': 1.00},
+    
+    'super' : {'cheeseburger': 6.69, 
+               'large fries': 2.00,
+               'smoothie': 2.00}
 }
 
+
+menu_items = {
+    'beef burger' : 5.69,
+    ['fries', 1.00] : 1.00,
+    ['large fries', 2.00]  :2.00,
+    [['fizzy drink', 1.00], 1.00] : 1.00,
+    ['cheeseburger', 6.69] : 6.69,
+    ['smoothie', 2.00] : 2.00
+}
 
 print(combos['value'])
 
